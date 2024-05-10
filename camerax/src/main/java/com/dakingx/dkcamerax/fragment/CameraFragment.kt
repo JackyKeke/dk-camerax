@@ -96,7 +96,8 @@ class CameraFragment : BaseFragment() {
         val REQUIRED_PERMISSIONS = listOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO,
-        ) + if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            ) + if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             listOf(
                 Manifest.permission.READ_MEDIA_IMAGES,
                 Manifest.permission.READ_MEDIA_VIDEO,
@@ -104,21 +105,24 @@ class CameraFragment : BaseFragment() {
             )
         } else {
             listOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
         }
 
+
         /**
          * 返回新的动态权限：相机、录音、写存储、读存储权限，如XXPermission
          */
-        val REQUIRED_PERMISSIONS_TIRAMISU = listOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.READ_MEDIA_VIDEO,
-            Manifest.permission.READ_MEDIA_AUDIO
-        )
+        val REQUIRED_PERMISSIONS_TIRAMISU =
+            listOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.READ_MEDIA_AUDIO
+            )
+
 
         @JvmStatic
         fun newInstance(fileProviderAuthority: String, cameraDirection: CameraDirection) =
