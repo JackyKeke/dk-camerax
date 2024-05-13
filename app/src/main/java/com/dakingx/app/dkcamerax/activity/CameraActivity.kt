@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ImageProxy
+import androidx.lifecycle.lifecycleScope
 import com.dakingx.app.dkcamerax.R
 import com.dakingx.app.dkcamerax.config.getFileProviderAuthority
 import com.dakingx.app.dkcamerax.databinding.ActivityCameraBinding
@@ -18,6 +19,8 @@ import com.dakingx.dkcamerax.fragment.CameraOp
 import com.dakingx.dkcamerax.fragment.CameraOpResult
 import com.dakingx.dkpreview.fragment.PreviewImageFragment
 import com.dakingx.dkpreview.fragment.PreviewVideoFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class CameraActivity : AppCompatActivity(), CameraFragmentListener {
 
@@ -55,18 +58,52 @@ class CameraActivity : AppCompatActivity(), CameraFragmentListener {
             .hide(previewVideoFragment).commitNow()
 
         mBinding.takePictureBtn.setOnClickListener {
-            mBinding.takePictureBtn.visibility = View.GONE
-            mBinding.startRecordingBtn.visibility = View.GONE
+//            mBinding.takePictureBtn.visibility = View.GONE
+//            mBinding.startRecordingBtn.visibility = View.GONE
+//
+//            cameraFragment.takePicture()
 
-            cameraFragment.takePicture()
+
+
+            lifecycleScope.launch {
+
+                while (!cameraFragment.cameraState()) {
+                    delay(1000L)
+                }
+                if (cameraFragment.takePicture()) {
+//                    mBinding.takePictureBtn.visibility = View.GONE
+//                    mBinding.startRecordingBtn.visibility = View.GONE
+//                    mBinding.stopRecodingBtn.visibility = View.VISIBLE
+                    mBinding.takePictureBtn.visibility = View.GONE
+                    mBinding.startRecordingBtn.visibility = View.GONE
+                }
+            }
+
+
         }
 
         mBinding.startRecordingBtn.setOnClickListener {
-            mBinding.takePictureBtn.visibility = View.GONE
-            mBinding.startRecordingBtn.visibility = View.GONE
-            mBinding.stopRecodingBtn.visibility = View.VISIBLE
 
-            cameraFragment.startRecording()
+            //间断检测是否完成拍照组件的初始化 （ban Thread.sleep）
+            // 更加完善保险 检测到十秒以上提醒客户重新打开照相机
+            lifecycleScope.launch {
+
+
+                while (!cameraFragment.cameraState()) {
+                    delay(1000L)
+                }
+                if (cameraFragment.startRecording()) {
+                    mBinding.takePictureBtn.visibility = View.GONE
+                    mBinding.startRecordingBtn.visibility = View.GONE
+                    mBinding.stopRecodingBtn.visibility = View.VISIBLE
+                }
+            }
+
+//            if(cameraFragment.startRecording()){
+//                mBinding.takePictureBtn.visibility = View.GONE
+//                mBinding.startRecordingBtn.visibility = View.GONE
+//                mBinding.stopRecodingBtn.visibility = View.VISIBLE
+//            }
         }
 
         mBinding.stopRecodingBtn.setOnClickListener {

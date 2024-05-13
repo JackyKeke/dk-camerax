@@ -18,6 +18,7 @@ import androidx.camera.core.*
 import androidx.camera.extensions.ExtensionMode
 import androidx.camera.extensions.ExtensionsManager
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import com.dakingx.dkcamerax.R
 import com.dakingx.dkcamerax.databinding.FragmentCameraBinding
 import com.dakingx.dkcamerax.ext.checkAppPermission
@@ -96,7 +97,7 @@ class CameraFragment : BaseFragment() {
         val REQUIRED_PERMISSIONS = listOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             ) + if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             listOf(
                 Manifest.permission.READ_MEDIA_IMAGES,
@@ -105,7 +106,7 @@ class CameraFragment : BaseFragment() {
             )
         } else {
             listOf(
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
         }
@@ -210,7 +211,8 @@ class CameraFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        mBinding.previewView.post { setup() }
+//        mBinding.previewView.post { setup() }
+        mBinding.previewView.postDelayed( { setup() },300)
     }
 
     override fun onDestroyView() {
@@ -264,6 +266,8 @@ class CameraFragment : BaseFragment() {
         } catch (e: Throwable) {
         }
     }
+
+    fun cameraState() = initialized
 
     @SuppressLint("RestrictedApi")
     private fun setup() {
@@ -325,7 +329,18 @@ class CameraFragment : BaseFragment() {
             imageProxy.use { cameraListener?.analyseImage(it) }
         }
 
-        initialized = true
+        //检测是否有预览流才决定是否初始化
+        mBinding.previewView.previewStreamState.observe(viewLifecycleOwner
+        ) { streamState ->
+            if (streamState == PreviewView.StreamState.STREAMING) {
+                initialized = true
+            }else{
+                initialized = false
+            }
+
+        }
+
+//        initialized = true
         startPreview()
     }
 

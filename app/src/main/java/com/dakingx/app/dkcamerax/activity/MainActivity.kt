@@ -1,10 +1,12 @@
 package com.dakingx.app.dkcamerax.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dakingx.app.dkcamerax.R
 import com.dakingx.app.dkcamerax.databinding.ActivityMainBinding
+import com.dakingx.dkcamerax.ext.logW
 import com.dakingx.dkcamerax.fragment.CameraDirection
 import com.dakingx.dkcamerax.fragment.CameraFragment
 import com.karumi.dexter.Dexter
@@ -44,8 +46,14 @@ class MainActivity : AppCompatActivity() {
                             CameraActivity.start(this@MainActivity, cameraDirection)
                         }
                     } else {
+                        var s = ""
+                        report.deniedPermissionResponses.forEach {
+                            s += it.permissionName + ";"
+                        }
                         runOnUiThread {
-                            toast(R.string.tip_lack_permission)
+                            Toast.makeText(this@MainActivity, getString(R.string.tip_lack_permission)+ ";"+s, Toast.LENGTH_SHORT).show()
+                            ( "onPermissionsdenied?: "+s ).logW()
+//                            toast(R.string.tip_lack_permission)
                         }
                     }
                 }
