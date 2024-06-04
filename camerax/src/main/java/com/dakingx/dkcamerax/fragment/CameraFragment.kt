@@ -272,10 +272,10 @@ class CameraFragment : BaseFragment() {
 
     @SuppressLint("RestrictedApi")
     private fun setup() {
-        if (!checkRequiredPermissions()) {
-            toastError(R.string.tip_lack_required_permissions)
-            return
-        }
+//        if (!checkRequiredPermissions()) {
+//            toastError(R.string.tip_lack_required_permissions)
+//            return
+//        }
 
         clear()
 
