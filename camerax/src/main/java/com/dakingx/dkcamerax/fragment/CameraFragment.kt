@@ -24,6 +24,7 @@ import com.dakingx.dkcamerax.databinding.FragmentCameraBinding
 import com.dakingx.dkcamerax.ext.checkAppPermission
 import com.dakingx.dkcamerax.ext.filePath2Uri
 import com.dakingx.dkcamerax.ext.generateTempFile
+import com.dakingx.dkcamerax.ext.logE
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicReference
@@ -589,6 +590,9 @@ class CameraFragment : BaseFragment() {
         //XXPermission框架获取权限是无需上层适配的，这里需要兼容
         val permissionTiramisuResult =
             context?.checkAppPermission(*REQUIRED_PERMISSIONS_TIRAMISU.toTypedArray()) ?: false
+
+        "permissionResult:${permissionResult}".logE()
+        "permissionTiramisuResult:${permissionTiramisuResult}".logE()
 
         return permissionResult || permissionTiramisuResult
     }

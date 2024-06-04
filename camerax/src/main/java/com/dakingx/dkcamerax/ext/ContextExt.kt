@@ -33,9 +33,9 @@ fun Context.filePath2Uri(fileProviderAuthority: String, filePath: String): Uri? 
 }
 
 fun Context.checkAppPermission(vararg permission: String): Boolean = permission.all {
-    ("onPermissionsdenied: ${it}" + (ContextCompat.checkSelfPermission(
+    ("onPermissionsdenied: ${it} " + (ContextCompat.checkSelfPermission(
         this,
         it
-    ) == PackageManager.PERMISSION_GRANTED)).logW()
+    ) == PackageManager.PERMISSION_GRANTED)).logE()
     ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
 }

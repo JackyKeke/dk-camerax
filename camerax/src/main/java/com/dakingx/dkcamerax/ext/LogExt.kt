@@ -29,7 +29,8 @@ internal object LogUtils {
     @JvmStatic
     @JvmOverloads
     fun e(s: String, tag: String = TAG) {
-        if (logSwitch) Log.e(tag, s)
+//        if (logSwitch)
+            Log.e(tag, s)
     }
 
     @JvmStatic
