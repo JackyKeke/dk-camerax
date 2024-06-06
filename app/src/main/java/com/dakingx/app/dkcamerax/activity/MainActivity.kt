@@ -4,16 +4,12 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.dakingx.app.dkcamerax.R
 import com.dakingx.app.dkcamerax.databinding.ActivityMainBinding
-import com.dakingx.dkcamerax.ext.logW
+import com.dakingx.dkcamerax.ext.checkAppPermission
 import com.dakingx.dkcamerax.fragment.CameraDirection
 import com.dakingx.dkcamerax.fragment.CameraFragment
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.XXPermissions
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,32 +33,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCameraActivity(cameraDirection: CameraDirection) {
-        Dexter.withContext(this)
-            .withPermissions(*CameraFragment.REQUIRED_PERMISSIONS.toTypedArray())
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                    if (report.areAllPermissionsGranted()) {
-                        runOnUiThread {
-                            CameraActivity.start(this@MainActivity, cameraDirection)
-                        }
-                    } else {
-                        var s = ""
-                        report.deniedPermissionResponses.forEach {
-                            s += it.permissionName + ";"
-                        }
-                        runOnUiThread {
-                            Toast.makeText(this@MainActivity, getString(R.string.tip_lack_permission)+ ";"+s, Toast.LENGTH_SHORT).show()
-                            ( "onPermissionsdenied?: "+s ).logW()
-//                            toast(R.string.tip_lack_permission)
-                        }
+
+        XXPermissions.with(this)
+            .permission(*CameraFragment.REQUIRED_PERMISSIONS_TIRAMISU.toTypedArray())
+            .request(object : OnPermissionCallback {
+                override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
+
+                    this@MainActivity.checkAppPermission(*permissions.toTypedArray())
+
+                    if (!allGranted) {
+                        return
                     }
+
+                    runOnUiThread {
+                        CameraActivity.start(this@MainActivity, cameraDirection)
+                    }
+
                 }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    list: MutableList<PermissionRequest>, token: PermissionToken
-                ) {
-                    token.continuePermissionRequest()
+                override fun onDenied(permissions: MutableList<String>, doNotAskAgain: Boolean) {
+                    super.onDenied(permissions, doNotAskAgain)
+
                 }
-            }).check()
+            })
+
     }
 }
